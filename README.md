@@ -1,31 +1,24 @@
 # LiveStream
 
-A small prototype for the community chat part of a streaming platform.
+A chat-room prototype built with Python’s `asyncio.Queue`. The focus is message delivery when one reader falls behind.
 
-## Current implementation
+Each member gets a queue capped at 100 messages. When it fills, the oldest message is dropped so newer messages can still arrive. Members can join and leave rooms, and banned users are removed from every room. Posts must contain 1–500 characters.
 
-Provides room membership, message fan-out, user bans, a 500-character limit, and a 100-message queue per member. Slow readers lose their oldest message when their queue fills.
+## Run it locally
 
-## Run
+Python 3.10 or newer is enough; there are no external dependencies.
 
-With Python 3.10+, clone this repository and run:
-
-```bash
+```sh
+git clone https://github.com/priyamukkapati/LiveStream.git
+cd LiveStream
 python3 app.py
-```
-
-{'user': 'host', 'text': 'Welcome to the coding session!'}
-
-## Tests
-
-```bash
 python3 -m unittest discover -s tests -v
 ```
 
-## Limitations
+The example joins a host and viewer to a room and delivers a welcome message. The test sends 105 messages to check the queue limit and drop-oldest behavior, then checks that a banned viewer cannot publish.
 
-Messages and membership exist in one process. This is not a video streaming server or a networked WebSocket application. Moderation methods are local calls and have no authentication layer.
+## What the name covers
 
-## Roadmap
+This repository handles chat inside one process. It does not stream video or connect clients over WebSockets. Membership and messages disappear when the process stops, and moderation is a local method call without access control.
 
-Add an authenticated WebSocket server, room-level moderator permissions, rate limiting, and a React client. Video streaming would require a separate media service.
+A useful next step is a WebSocket adapter with a fast reader and a deliberately slow reader, so the queue policy can be demonstrated across actual connections.
